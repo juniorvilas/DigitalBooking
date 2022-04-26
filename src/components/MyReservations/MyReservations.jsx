@@ -12,7 +12,8 @@ const MyReservations = () => {
   const { user } = useUser();
   const { email } = user;
   const [reservations, setReservations] = useState();
-  // const [productImg, setProductImg] = useState();
+
+
   const getAllReservationsByEmail = (email) => {
     if (email) {
       api
@@ -20,8 +21,8 @@ const MyReservations = () => {
         .then((res) => {
           if (res.status === 200) {
             if(res.data.length > 0) {
+              console.log(res.data);
               setReservations(res.data);
-              // getProductById(res.data[0].produto.id);
             }
           }
         })
@@ -31,17 +32,6 @@ const MyReservations = () => {
     }
   };
 
-  // const getProductById = (id) => {
-  //   if(id) {
-  //     api
-  //       .get(`/produtos/permitAll/buscar/${id}`)
-  //       .then(res => {
-  //         if(res.status === 200) {
-  //           setProductImg(res.data.imagens[0].url);
-  //         }
-  //       })
-  //   }
-  // }
   useEffect(() => {
     getAllReservationsByEmail(email);
   }, [email]);
@@ -54,7 +44,7 @@ const MyReservations = () => {
           {reservations.map((reservation, index) => {
             return (
               <li className="reservations__item" key={index}>
-                <img src={reservation.produto.categoria.urlImagem} alt="" />
+                <img src={reservation.produto.imagens[0].url} alt="" />
                 <span className="reservations__name">
                   {reservation.produto.nome}
                 </span>

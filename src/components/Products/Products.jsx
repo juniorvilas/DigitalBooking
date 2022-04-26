@@ -92,11 +92,11 @@ const Products = () => {
   }
 
   useEffect(() => {
-    if (filter.location) filteringProductsByLocation();
+    if (isFilterNotEmpty()) filteringProductsByLocationAndDateInterval();
+    else if (filter.location) filteringProductsByLocation();
     else if (filter.category) filteringProductsByCategory();
-    else if (isFilterNotEmpty()) filteringProductsByLocationAndDateInterval();
     else getAllProducts();
-  }, [filter]);
+  }, [filter]); 
 
   return (
     <>

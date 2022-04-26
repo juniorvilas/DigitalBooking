@@ -37,15 +37,13 @@ const selectStyles = {
     borderBottom: "1px solid var(--light-color)",
     color: state.isSelected ? "var(--primary-color)" : "var(--dark-color-2)",
     padding: 20,
-    fontSize: "1rem"
+    fontSize: "1rem",
   }),
   control: (provided, state) => ({
     ...provided,
     backgroundColor: "rgba(var(--light-color-rgb), .5)",
     fontSize: "1rem",
-    borderColor: state.isFocused
-      ? "var(--primary-color)"
-      : "transparent",
+    borderColor: state.isFocused ? "var(--primary-color)" : "transparent",
   }),
 };
 const CreateForm = () => {
@@ -57,14 +55,16 @@ const CreateForm = () => {
   const [cidades, setCidades] = useState();
   const [cep, setCep] = useState();
   const [address, setAddress] = useState();
-  const [nameCamping, setNameCamping] = useState();
   const [img, setImage] = useState([]);
   const [selectedFeatures, setFeatures] = useState([]);
   const [caracteristicas, setCaracteristicas] = useState([]);
-  const [objFromFormik, setObjFromFormik] = useState(null);
+  // const [objFromFormik, setObjFromFormik] = useState(null);
   const [isModalOpen, setModalStatus] = useState(false);
   const [showMap, setShowMap] = useState(false);
   const [prodCoords, setProdCoords] = useState(null);
+  const [thumbnail, setThumbnail] = useState();
+
+  console.log(img);
   /*FUNÇÕES DA CATEGORIA */
   const style = {
     control: (provided, state) => ({
@@ -122,29 +122,42 @@ const CreateForm = () => {
 
   /* busca as coordenadas de um endereço informado em string*/
   const getCoordinates = async (endereco, cidade) => {
-
-    let addressString = `${endereco.replaceAll(" ", "%20")},%20${cidade.replaceAll(" ", "%20")}`
-    let token_mapbox = "pk.eyJ1IjoiamFyZGVsb2wiLCJhIjoiY2wxcjB4cGozMDd2eDNsb2YxZGhpejRibCJ9._l09TWULOHc1yqWtCobxJQ"
-    let url = `${addressString}.json?types=address&country=BR&access_token=${token_mapbox}`
-    let data = await (await apiMapbox.get(url)).data
+    let addressString = `${endereco.replaceAll(
+      " ",
+      "%20"
+    )},%20${cidade.replaceAll(" ", "%20")}`;
+    let token_mapbox =
+      "pk.eyJ1IjoiamFyZGVsb2wiLCJhIjoiY2wxcjB4cGozMDd2eDNsb2YxZGhpejRibCJ9._l09TWULOHc1yqWtCobxJQ";
+    let url = `${addressString}.json?types=address&country=BR&access_token=${token_mapbox}`;
+    let data = await (await apiMapbox.get(url)).data;
     const city = data.features.reduce(function (prev, current) {
-      return (prev.relevance > current.relevance) ? prev : current
-    })
+      return prev.relevance > current.relevance ? prev : current;
+    });
     const coords = {
       latitude: city.center[1],
-      longitude: city.center[0]
-    }
+      longitude: city.center[0],
+    };
 
     return {
       coords: coords,
-      placeName: city.place_name
-    }
-  }
+      placeName: city.place_name,
+    };
+  };
 
   /*ADD IMAGENS NO ARRAY */
   const getImg = (imageObj) => {
-    setImage((oldImageArray) => [...oldImageArray, imageObj]);
+    let imageAlreadyExists = img.find((image) => image.url === imageObj.url);
+    if (imageAlreadyExists) {
+      Toast.fire({
+        icon: "warning",
+        title: "Imagem já existente.",
+      });
+    } else {
+      setImage((oldImageArray) => [...oldImageArray, imageObj]);
+    }
   };
+
+  /* RECUPERAR A THUMBNAIL*/
 
   /* EXCLUI IMAGENS DO ARRAY */
   const deleteImg = (url) => {
@@ -214,21 +227,33 @@ const CreateForm = () => {
       img,
     };
 
-    let cidadeProduto = null
+    let cidadeProduto = null;
     for (let cidade of cidades) {
       if (cidade.nome.toLowerCase() == productApi.cidade.toLowerCase()) {
-        cidadeProduto = cidade
+        cidadeProduto = cidade;
       }
     }
 
+    let newImgArray = img.map( img => {
+      if(img.url === thumbnail) {
+        img.ehImagemCapa = true;
+      } else {
+        img.ehImagemCapa = false;
+      }
+      return img
+    })
+    
     return {
       nome: productApi.nome,
       descricao: productApi.descricao,
       latitude: productApi.coords.latitude,
       longitude: productApi.coords.longitude,
-      imagens: productApi.img,
+      imagens: newImgArray || [ ],
       endereco: productApi.endereco,
-      cidade: cidadeProduto ? cidadeProduto : { nome: productApi.cidade, pais: "Brasil" },
+      valorPorPessoa: productApi.valorPorPessoa,
+      cidade: cidadeProduto
+        ? cidadeProduto
+        : { nome: productApi.cidade, pais: "Brasil" },
       categoria: { id: productApi.categorySelect },
       caracteristicas: atributosEditados,
       limitePessoasPorDia: productApi.limitePessoasPorDia,
@@ -236,25 +261,29 @@ const CreateForm = () => {
   };
 
   const openModalWithMap = async (endereco, cidade) => {
-
-    const { coords } = await getCoordinates(endereco, cidade)
-    setProdCoords(coords)
-    setShowMap(true)
+    const { coords } = await getCoordinates(endereco, cidade);
+    setProdCoords(coords);
+    setShowMap(true);
     setModalStatus(true);
-  }
+  };
 
   function closeModal() {
     setModalStatus(false);
-    setShowMap(false)//retirando o mapa do modal
+    setShowMap(false); //retirando o mapa do modal
   }
 
-  function createProductToApi(product) {
-    const objProd = createProduct(product)
-    setObjFromFormik(objProd);
 
-    if (objFromFormik) {
+  function createProductToApi(product) {
+    const objProd = createProduct(product);
+
+    if (objProd) {
+      let thumbnailIsSelected = objProd.imagens.some(img => img.ehImagemCapa)
+      if(!thumbnailIsSelected) {
+        Toast.fire({icon:'warning',title:'Selecione a capa principal'})
+        return;
+      }
       api
-        .post("/produtos/salvar", objFromFormik, {
+        .post("/produtos/salvar", objProd, {
           headers: {
             Authorization: "Bearer " + cookies.token,
           },
@@ -262,7 +291,6 @@ const CreateForm = () => {
         .then((res) => {
           if (res.status === 201) {
             setModalStatus(true);
-
           }
         })
         .catch((error) => {
@@ -299,18 +327,20 @@ const CreateForm = () => {
       <Formik
         enableReinitialize
         initialValues={{
-          nome: nameCamping ? nameCamping : "",
+          nome: "",
           endereco: address ? address.street : "",
           cidade: address ? address.city : "",
           descricao: "",
           limitePessoasPorDia: "",
+          valorPorPessoa: "",
         }}
         onSubmit={async (values, actions) => {
-          console.log(values.endereco, values.cidade)
-          const { coords, placeName } = await getCoordinates(values.endereco, values.cidade)
-
+          const { coords, placeName } = await getCoordinates(
+            values.endereco,
+            values.cidade
+          );
           createProductToApi({ ...values, endereco: placeName, coords })
-          actions.resetForm
+          actions.resetForm;
         }}
       >
         {({ values }) => {
@@ -320,15 +350,16 @@ const CreateForm = () => {
               <div className="item-form">
                 <label htmlFor="nome">Nome da propriedade</label>
                 <Field
-                  onChange={(e) => setNameCamping(e.target.value)}
                   className="input"
                   type="text"
                   name="nome"
+                  value={values.nome}
                   placeholder="Ex: Camping Chapada"
                 />
               </div>
               {/* 2 - CATEGORIA - SELECT? */}
               <div className="item-form">
+                <label>{values.category}</label>
                 <label htmlFor="category">Categoria</label>
                 <Select
                   styles={style}
@@ -367,12 +398,13 @@ const CreateForm = () => {
                 />
                 <button
                   disabled={cep || address?.street ? false : true}
-                  onClick={() => openModalWithMap(values.endereco, values.cidade)}
+                  onClick={() =>
+                    openModalWithMap(values.endereco, values.cidade)
+                  }
                   type="button"
                   className="btn-map"
                 >
-                  Ver no mapa {" "}
-                  <FontAwesomeIcon icon={faMapLocationDot} />
+                  Ver no mapa <FontAwesomeIcon icon={faMapLocationDot} />
                 </button>
               </div>
               {/* 5 - CIDADE > SELECT DA CIDADE COM ESTADO EX: SAO PAULO-SP */}
@@ -387,15 +419,24 @@ const CreateForm = () => {
               </div>
               {/* 7 - LIMITE PESSOAS DIA: */}
               <div className="item-form">
-                <label htmlFor="limitePessoasPorDia">
-                  Limite pessoa por dia
-                </label>
-                <Field
-                  className="input"
-                  type="number"
-                  name="limitePessoasPorDia"
-                />
+                <div className="div-limite">
+                  <label htmlFor="limitePessoasPorDia">Limite de pessoas</label>
+                  <Field
+                    className="input"
+                    type="number"
+                    name="limitePessoasPorDia"
+                  />
+                </div>
+                <div className="div-limite">
+                  <label htmlFor="valorPorPessoa">Valor por pessoa</label>
+                  <Field
+                    className="input"
+                    type="number"
+                    name="valorPorPessoa"
+                  />
+                </div>
               </div>
+
               {/* 6 - DESCRIÇÃO :  */}
               <div className="description">
                 <label htmlFor="descricao">Descrição</label>
@@ -443,27 +484,27 @@ const CreateForm = () => {
                 <p>Carregar Imagens</p>
               </div>
               <AddImage getImg={getImg} isRemove={false} />
-              {
-                img &&
-                img.map((img, index) => {
+
+              {img &&
+                img.map((img) => {
                   return (
                     <AddImage
                       deleteImg={deleteImg}
-                      key={index}
+                      key={img.url}
                       img={img}
                       isRemove={true}
+                      getThumbnail={setThumbnail}
                     />
                   );
-                })
-              }
+                })}
 
               <button type="submit" className="btn-create-prod btn-filled">
                 Criar
               </button>
-            </Form >
+            </Form>
           );
         }}
-      </Formik >
+      </Formik>
       <Modal
         isOpen={isModalOpen}
         onRequestClose={closeModal}
@@ -471,9 +512,13 @@ const CreateForm = () => {
         contentLabel="Example Modal"
         appElement={document.getElementById("root")}
       >
-        {showMap ? <Map product={prodCoords} /> : <ModalSuccess texto={"Produto criado com sucesso!"} />}
-      </Modal >
-    </div >
+        {showMap ? (
+          <Map product={prodCoords} />
+        ) : (
+          <ModalSuccess texto={"Produto criado com sucesso!"} />
+        )}
+      </Modal>
+    </div>
   );
 };
 

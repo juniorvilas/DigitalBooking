@@ -27,6 +27,7 @@ const customStyles = {
   },
 };
 const BookingDetails = () => {
+  
   const { user } = useUser();
   const { filter } = useFilter();
   const { checkin, checkout } = filter;

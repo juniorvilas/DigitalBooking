@@ -27,6 +27,7 @@ import { useFilter } from "../../hooks/useFilter";
 // 0[DOMINGO] | 1[SEGUNDA] | 2[TERÇA] | 3[QUARTA] | 4[QUINTA] | 5[SEXTA] | 6[SÁBADO]
 
 const Calendario = ({ title, datasIndisponiveis=[] }) => {
+  
   const [date, setDate] = useState(new Date(Date.now()));
   const { filter, setFilter } = useFilter();
   const { checkin, checkout } = filter;

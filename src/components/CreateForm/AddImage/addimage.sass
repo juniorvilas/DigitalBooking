@@ -5,7 +5,7 @@
     width: 100%
     flex-wrap: wrap
     justify-content: center
-
+    align-items: center
     margin-bottom: 1rem    
     & button
         border: none
@@ -25,3 +25,7 @@
         color: var(--dark-color-1)
         font-size: .9rem
         margin-top: .5rem
+.radio-btn
+    @include mixins.mobile
+        width: 100%
+        margin: 1.5rem

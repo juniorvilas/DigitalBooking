@@ -1,23 +1,31 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import "./CardProduct.sass";
 import PropTypes from "prop-types";
-import {
-  faHeart,
-  faMapMarkerAlt
-} from "@fortawesome/free-solid-svg-icons";
+import { faHeart, faMapMarkerAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const CardProduct = ({ product }) => {
   const [showMore, setShowMore] = useState(false);
+  const [imgThumbnail, setImgThumbnail] = useState();
+
   const showMoreHandler = () => {
     setShowMore((prevState) => !prevState);
   };
 
+  useEffect(() => {
+    product.imagens.forEach((img) => {
+      if (img.ehImagemCapa) setImgThumbnail(img.url);
+    })
+  })
+
   return (
     <div className="product">
       <div className="product__img">
-        <img src={product.imagens[0]?.url} alt="imagem camp" />
+        <img
+          src={imgThumbnail}
+          alt="imagem camp"
+        />
         <FontAwesomeIcon icon={faHeart} className="product__heartIcon" />
       </div>
       <div className="product__details">
