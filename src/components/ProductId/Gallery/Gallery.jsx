@@ -1,4 +1,5 @@
 import "./gallery.sass";
+import React from "react";
 import {
   faChevronLeft,
   faChevronRight,
@@ -52,9 +53,10 @@ export const Gallery = ({ close, imagesApi }) => {
           {imagesApi.map((img, index) => {
             return (
               <img
+                key={index}
                 src={img.url}
                 onClick={() => {
-                  setCurrentImage(index);
+                setCurrentImage(index);                
                 }}
                 className={`${currentImage === index ? "selected" : ""}`}
               />
