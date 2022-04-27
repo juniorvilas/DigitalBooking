@@ -55,6 +55,7 @@ const SelectCity = ({ getLocation }) => {
     <Select 
     styles={customStyles}
     options={options}
+    placeholder="Selecione uma cidade"
     onChange={e => getLocation(e.nome)}
     getOptionLabel={(options) => options['nome']}
     />
