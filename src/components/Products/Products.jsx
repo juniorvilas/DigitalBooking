@@ -5,6 +5,7 @@ import { useFilter } from "../../hooks/useFilter";
 import { useProducts } from "../../hooks/useProducts";
 import IsFetchingAnimation from '../IsFetchingAnimation/IsFetchingAnimation';
 import api from "../../services/api";
+import { format } from "date-fns";
 // import { api } from "../../services/apiClient";
 
 
@@ -58,12 +59,16 @@ const Products = () => {
 
   const filteringProductsByLocationAndDateInterval = () => {
     setIsFetching(true);
+    const checkIn = format(new Date(filter.checkin), "yyyy-MM-dd")
+    const checkOut = format(new Date(filter.checkout), "yyyy-MM-dd")
+    
+
     api
       .get(
-        `/produtos/permitAll/buscar?cidade=${filter.location}&data-inicio=${filter.checkin}&data-fim=${filter.checkout}&num-pessoas=${filter.qntyPersons}`
+        `/produtos/permitAll/buscar?cidade=${filter.location}&data-inicio=${checkIn}&data-fim=${checkOut}&num-pessoas=${filter.qntyPersons}`
       )
       .then((res) => {
-        console.log(res.data);
+        setProducts(res.data)
         setIsFetching(false);
       })
       .catch((error) => {
