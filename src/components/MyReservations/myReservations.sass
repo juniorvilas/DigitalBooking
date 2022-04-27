@@ -21,7 +21,7 @@
         @include mixins.tablet
             display: grid
             grid-template-columns: repeat(4, max-content)
-            grid-template-rows: repeat(4, 1fr)
+            grid-template-rows: repeat(5, 1fr)
         align-items: center
         display: flex
         flex-direction: column
@@ -66,11 +66,19 @@
                 padding-left: .5rem
         @include mixins.tablet
             grid-area: 1 / 4 / 2 / 5
-    &__status
+    &_quant
+        &::before
+            content: "Quantidade de Pessoas:  "
+            font-weight: 600
+        @include mixins.tablet
+            grid-area: 4 / 2 / 5 / 3
+    &__status        
         color: var(--primary-color)
         font-weight: 600
         @include mixins.tablet
-            grid-area: 4 / 2 / 5 / 3
+            grid-area: 5 / 2 / 5 / 3
+    
+
       
 .empty
     margin-top: 4rem

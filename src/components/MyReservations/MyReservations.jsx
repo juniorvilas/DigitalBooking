@@ -49,13 +49,17 @@ const MyReservations = () => {
                   {reservation.produto.nome}
                 </span>
                 <span className="reservations__checkin">
-                  {format(parseISO(reservation.dataInicio), "dd/MM/yyyy")}
+                  {format(parseISO(reservation.dataInicio), "dd/MM/yyyy - ")}
+                  {reservation.horarioInicio.slice(0, 5)}
                 </span>
                 <span className="reservations__checkout">
                   {format(parseISO(reservation.dataFinal), "dd/MM/yyyy")}
                 </span>
                 <span className="reservations__location">
                   {reservation.produto.cidade.nome}
+                </span>
+                <span className="reservations_quant">
+                {reservation.qtdPessoas}
                 </span>
                 <span className="reservations__status">Reservado</span>
               </li>
