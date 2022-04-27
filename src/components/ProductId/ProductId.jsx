@@ -29,7 +29,7 @@ const ProductId = () => {
   const Navigate = useNavigate();
   const [isModalGalleryOpen, setIsModalGalleryOpen] = useState(false);
   const [product, setProduct] = useState();
-  console.log()
+  
   console.log(product);
   const getProductById = (id) => {
     if (id) {
