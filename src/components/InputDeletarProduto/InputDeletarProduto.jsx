@@ -1,5 +1,5 @@
 import "./deletarProduto.sass";
-import { useState } from "react";
+import React , { useState } from "react";
 import api from '../../services/api';
 import{ useCookies} from 'react-cookie';
 import Swal from "sweetalert2/dist/sweetalert2.js";

@@ -13,6 +13,7 @@ import {
   addYears,
   getYear,
   isPast,
+  parseISO,
 } from "date-fns";
 import { pt } from "date-fns/locale";
 import { useState } from "react";
@@ -27,6 +28,7 @@ import { useFilter } from "../../hooks/useFilter";
 // 0[DOMINGO] | 1[SEGUNDA] | 2[TERÇA] | 3[QUARTA] | 4[QUINTA] | 5[SEXTA] | 6[SÁBADO]
 
 const Calendario = ({ title, datasIndisponiveis=[] }) => {
+  
   const [date, setDate] = useState(new Date(Date.now()));
   const { filter, setFilter } = useFilter();
   const { checkin, checkout } = filter;
@@ -163,11 +165,12 @@ const Calendario = ({ title, datasIndisponiveis=[] }) => {
               const date = getDateByDay(n);
 
               const checkReservation = (dateReservation) => {
-                let parsedDate = new Date(date);
-                return isEqual(dateReservation, parsedDate);
+                let parsedDate = new Date(date);           
+                return isEqual(parseISO(dateReservation),parsedDate);
               };
 
               const reserved = datasIndisponiveis.find(checkReservation);
+              
 
               const validations = {
                 isBetween: null,
@@ -201,7 +204,7 @@ const Calendario = ({ title, datasIndisponiveis=[] }) => {
                 <Dia
                   key={index}
                   date={date}
-                  isAvailable={reserved}
+                  isReserved={reserved}
                   checkInOutHandler={checkInOutHandler}
                   isBetween={validations.isBetween}
                   isCheckin={validations.isCheckin}
@@ -233,13 +236,16 @@ const Calendario = ({ title, datasIndisponiveis=[] }) => {
             {daysToRender.nextMonth.map((n, index) => {
               var date = getDateByDay(n, true);
 
-              const checkReservation = (dateReservation) => {
-                let parsedDate = new Date(date);
-                return isEqual(dateReservation, parsedDate);
+              const checkReservation = (dateReservation) => {                
+                let parsedDate = new Date(date);   
+                return isEqual(parseISO(dateReservation),parsedDate);
+                
               };
 
-              let reserved = datasIndisponiveis.find(checkReservation);
+              
 
+              let reserved = datasIndisponiveis.find(checkReservation);
+              
 
               const validations = {
                 isBetween: null,
@@ -273,7 +279,7 @@ const Calendario = ({ title, datasIndisponiveis=[] }) => {
                 <Dia
                   key={index + 100}
                   date={date}
-                  isAvailable={reserved}
+                  isReserved={reserved}
                   checkInOutHandler={checkInOutHandler}
                   isBetween={validations.isBetween}
                   isCheckin={validations.isCheckin}

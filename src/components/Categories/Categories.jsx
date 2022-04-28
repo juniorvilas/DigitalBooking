@@ -4,7 +4,6 @@ import Category from "./Category/Category";
 import { useFilter } from "../../hooks/useFilter";
 import IsFetchingAnimation from '../IsFetchingAnimation/IsFetchingAnimation';
 import api from "../../services/api";
-// import { api } from "../../services/apiClient";
 import { removeValue } from '../../utils/useSessionStorage';
 
 const Categories = () => {

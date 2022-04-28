@@ -11,7 +11,7 @@ const AmountOfPersonPicker = () => {
         type="number"
         step="1"
         min="0"
-        defaultValue={filter.qntyPersons}
+        value={filter.qntyPersons || 0}
         required
         onChange={(e) => {
           setFilter((prevState) => {

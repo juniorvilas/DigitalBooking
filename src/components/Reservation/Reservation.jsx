@@ -6,8 +6,12 @@ import ProductHeader from '../ProductHeader/ProductHeader';
 import ProductDetails from "./ProductDetails/ProductDetails";
 import PoliticaInfo from "../PoliticaInfo/PoliticaInfo";
 import React from 'react';
+import { getValue } from "../../utils/useSessionStorage";
 
 const Reservation = () => {
+
+const {datasIndisponiveis} = getValue("product");
+
   return (
     <>
       <ProductHeader />
@@ -16,7 +20,7 @@ const Reservation = () => {
           <UserDetails />
         </div>
         <div className="booking-reserva-item">
-          <Calendar
+          <Calendar datasIndisponiveis={datasIndisponiveis}
             title={"Seleciona sua data de reserva"}
             
           />
