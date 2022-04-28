@@ -165,9 +165,7 @@ const Calendario = ({ title, datasIndisponiveis=[] }) => {
               const date = getDateByDay(n);
 
               const checkReservation = (dateReservation) => {
-                let parsedDate = new Date(date);               
-                
-                /* return isEqual(new Date(dateReservation), parsedDate); */
+                let parsedDate = new Date(date);           
                 return isEqual(parseISO(dateReservation),parsedDate);
               };
 
@@ -239,9 +237,7 @@ const Calendario = ({ title, datasIndisponiveis=[] }) => {
               var date = getDateByDay(n, true);
 
               const checkReservation = (dateReservation) => {                
-                let parsedDate = new Date(date);                
-               
-                /* return isEqual(new Date(dateReservation), parsedDate); */
+                let parsedDate = new Date(date);   
                 return isEqual(parseISO(dateReservation),parsedDate);
                 
               };

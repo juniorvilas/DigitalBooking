@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import ProductHeader from '../ProductHeader/ProductHeader';
 import Carousel from "react-bootstrap/Carousel";
-import { faShareAlt, faHeart } from "@fortawesome/free-solid-svg-icons";
+import { faShareAlt, faHeart,  faCircleDollarToSlot } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Gallery } from "./Gallery/Gallery";
 import Calendar from "../Calendar/Calendar";
@@ -11,7 +11,7 @@ import Map from "./Map/Map";
 import PoliticaInfo from "../PoliticaInfo/PoliticaInfo";
 import IsFetchingAnimation from "../IsFetchingAnimation/IsFetchingAnimation";
 import api from "../../services/api";
-// import { api } from "../../services/apiClient";
+
 
 import { getValue, setValue } from '../../utils/useSessionStorage';
 
@@ -134,6 +134,14 @@ const ProductId = () => {
             <div className="availables-dates">
               <Calendar title={"Datas disponíveis"} datasIndisponiveis={product.datasIndisponiveis} />
               <div className="availables-dates__reserva">
+                <p className="availables-dates__product-price">
+                  <FontAwesomeIcon icon={faCircleDollarToSlot} className="product__mapIcon" />
+                  <b>Diária: </b> {new Intl.NumberFormat("pt-BR", {
+                    style: 'currency',
+                    currency: 'BRL',
+                    minimumFractionDigits: 2,
+                  }).format(product.valorPorPessoa || "35")}/pessoa
+                </p>
                 <p>Adicione as datas da sua viagem para obter preços exatos</p>
                 <button className="btn-filled" onClick={sendToReservation}>
                   Iniciar reserva

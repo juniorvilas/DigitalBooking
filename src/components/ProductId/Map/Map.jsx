@@ -1,14 +1,13 @@
 import 'leaflet/dist/leaflet.css';
 import './Map.sass';
 import { useEffect, useState } from "react";
-import L from "leaflet";
 import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from "react-leaflet";
 import RoutingMachine from './RoutingMachine';
 import { useCookies } from "react-cookie";
 import Swal from "sweetalert2/dist/sweetalert2.js";
 import React from 'react';
 
-function LocationMarker(props) {
+/* function LocationMarker(props) {
     const [position, setPosition] = useState(null)
 
     const leafletIcon = L.icon({
@@ -33,11 +32,11 @@ function LocationMarker(props) {
     })
 
     return position === null ? null : (
-        <Marker position={position} /* icon={leafletIcon}  */>
+        <Marker position={position} icon={leafletIcon} >
             <Popup>{props.coorsdProd ? "Localização do produto no mapa!" : "Você está aqui!"}</Popup>
         </Marker>
     )
-}
+} */
 
 const Map = (props) => {
     const [cookies] = useCookies();
@@ -86,9 +85,14 @@ const Map = (props) => {
                 navigator.geolocation.getCurrentPosition(function (position) {
                     setCoords([position.coords.latitude, position.coords.longitude])
                     console.log(coords)
-                });
+                })
+            if (funcaoUser === "ROLE_ADMIN")
+                navigator.geolocation.getCurrentPosition(function (position) {
+                    setProdCoords([position.coords.latitude, position.coords.longitude])
+                    console.log(coords)
+                })
         } else
-            Toast.fire({ icon: "warning", title: "Falha ao buscar sua localizaçaõ. O navegador não tem suporte a API Geolocation" });
+            Toast.fire({ icon: "warning", title: "Falha ao buscar sua localização. O navegador não tem suporte a API Geolocation" });
 
         if (props.product) {
             setProdCoords([props.product.latitude, props.product.longitude]);
@@ -110,7 +114,9 @@ const Map = (props) => {
                 {funcaoUser !== "ROLE_ADMIN" && coords != null ?
                     <RoutingMachine start={coords} end={prodCoords} />
                     :
-                    <LocationMarker coorsdProd={prodCoords} />
+                    <Marker position={prodCoords} >
+                        <Popup>{prodCoords ? "Localização do produto no mapa!" : "Você está aqui!"}</Popup>
+                    </Marker>
                 }
             </MapContainer>
         </div>

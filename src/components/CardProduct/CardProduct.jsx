@@ -2,12 +2,18 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import "./CardProduct.sass";
 import PropTypes from "prop-types";
-import { faHeart, faMapMarkerAlt } from "@fortawesome/free-solid-svg-icons";
+import { 
+  faHeart,
+   faMapMarkerAlt,
+   faCircleDollarToSlot 
+  } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { setValue } from '../../utils/useSessionStorage';
 
 const CardProduct = ({ product }) => {
   const [showMore, setShowMore] = useState(false);
   const [imgThumbnail, setImgThumbnail] = useState();
+  
 
   const showMoreHandler = () => {
     setShowMore((prevState) => !prevState);
@@ -18,6 +24,15 @@ const CardProduct = ({ product }) => {
       if (img.ehImagemCapa) setImgThumbnail(img.url);
     })
   })
+
+
+  useEffect(() => {
+    if (!product)
+      return
+
+    setValue("product", product);
+    console.log("product card", product)
+  }, [product])
 
   return (
     <div className="product">
@@ -34,12 +49,20 @@ const CardProduct = ({ product }) => {
           <span className="product-title">{product.nome}</span>
         </div>
         <div className="product__rating">
-          <span>8</span>
+          <span>{product.notaDeAvaliacao}</span>
           <p>Muito bom</p>
         </div>
         <p className="product__location">
           <FontAwesomeIcon icon={faMapMarkerAlt} className="product__mapIcon" />
           {product.cidade.nome}
+        </p>
+        <p className="product__price">
+          <FontAwesomeIcon icon={faCircleDollarToSlot} className="product__mapIcon" />
+          <b>Diária: </b> {new Intl.NumberFormat("pt-BR", {
+            style: 'currency',
+            currency: 'BRL',
+            minimumFractionDigits: 2,
+          }).format(product.valorPorPessoa || "35")}/pessoa
         </p>
         <div className="product__features">
           {product.caracteristicas.map((caracteristica) => {

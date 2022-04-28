@@ -84,8 +84,20 @@
         font-size: .9rem
         font-weight: 600
         margin-left: .6rem
+        grid-row: 2 / 3
         grid-column: 1 / -1
         position: relative
+        
+    &__price
+        font-size: .8rem
+        font-weight: 500
+        margin-left: .6rem
+        grid-column: 1 / -1
+        grid-row: 2 / 3
+        position: relative
+        justify-self: end
+        @include mixins.desktop
+            margin-right: .5rem
 
     &__features
         font-size: 1.2rem

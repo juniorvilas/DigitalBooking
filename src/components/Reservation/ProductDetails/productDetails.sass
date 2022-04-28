@@ -79,12 +79,24 @@
         color: var(--dark-color-1)
         display: inline-block
         padding: 2rem 2rem 0
+    &__price
+        /* position: absolute */
+        // top: 20px
+        right: 0
+        text-align: start
+        font-size: .9rem
+        color: var(--dark-color-1)
+        padding: 1rem 2rem 0
+        & span
+            // font-size: .9rem
+            display: block
         
     &__stars
         margin: .5rem 2rem
     
     &__checkin,
-    &__checkout
+    &__checkout,
+    &__amount
         display: flex
         justify-content: space-between
         font-size: 1rem

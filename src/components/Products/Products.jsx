@@ -6,7 +6,7 @@ import { useProducts } from "../../hooks/useProducts";
 import IsFetchingAnimation from '../IsFetchingAnimation/IsFetchingAnimation';
 import api from "../../services/api";
 import { format } from "date-fns";
-// import { api } from "../../services/apiClient";
+
 
 
 

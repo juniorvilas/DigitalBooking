@@ -58,13 +58,10 @@ const CreateForm = () => {
   const [img, setImage] = useState([]);
   const [selectedFeatures, setFeatures] = useState([]);
   const [caracteristicas, setCaracteristicas] = useState([]);
-  // const [objFromFormik, setObjFromFormik] = useState(null);
   const [isModalOpen, setModalStatus] = useState(false);
   const [showMap, setShowMap] = useState(false);
   const [prodCoords, setProdCoords] = useState(null);
-  const [thumbnail, setThumbnail] = useState();
-
-  console.log(img);
+  const [thumbnail, setThumbnail] = useState(); 
   /*FUNÇÕES DA CATEGORIA */
   const style = {
     control: (provided, state) => ({
@@ -122,27 +119,27 @@ const CreateForm = () => {
 
   /* busca as coordenadas de um endereço informado em string*/
   const getCoordinates = async (endereco, cidade) => {
-    let addressString = `${endereco.replaceAll(
-      " ",
-      "%20"
-    )},%20${cidade.replaceAll(" ", "%20")}`;
-    let token_mapbox =
-      "pk.eyJ1IjoiamFyZGVsb2wiLCJhIjoiY2wxcjB4cGozMDd2eDNsb2YxZGhpejRibCJ9._l09TWULOHc1yqWtCobxJQ";
-    let url = `${addressString}.json?types=address&country=BR&access_token=${token_mapbox}`;
-    let data = await (await apiMapbox.get(url)).data;
-    const city = data.features.reduce(function (prev, current) {
-      return prev.relevance > current.relevance ? prev : current;
-    });
-    const coords = {
-      latitude: city.center[1],
-      longitude: city.center[0],
-    };
+    if (cidade && endereco) {
+      let addressString = `${endereco.replaceAll(" ", "%20")},%20${cidade.replaceAll(" ", "%20")}`
+      let token_mapbox = "pk.eyJ1IjoiamFyZGVsb2wiLCJhIjoiY2wxcjB4cGozMDd2eDNsb2YxZGhpejRibCJ9._l09TWULOHc1yqWtCobxJQ"
+      let url = `${addressString}.json?types=address&country=BR&access_token=${token_mapbox}`
+      let data = await (await apiMapbox.get(url)).data
+      const city = data.features.reduce(function (prev, current) {
+        return (prev.relevance > current.relevance) ? prev : current
+      })
+     const coords = {
+        latitude: city.center[1],
+        longitude: city.center[0]
+      }
 
-    return {
-      coords: coords,
-      placeName: city.place_name,
-    };
-  };
+      return {
+        coords: coords,
+        placeName: city.place_name
+      }
+    } else {
+      Toast.fire({ icon: "warning", title: "Falha ao buscar sua localização. Por favor recarregue a página, verifique os campos e tente novamente, caso o erro persista tente novamente mais tarde!" });
+    }
+  }
 
   /*ADD IMAGENS NO ARRAY */
   const getImg = (imageObj) => {
@@ -156,8 +153,6 @@ const CreateForm = () => {
       setImage((oldImageArray) => [...oldImageArray, imageObj]);
     }
   };
-
-  /* RECUPERAR A THUMBNAIL*/
 
   /* EXCLUI IMAGENS DO ARRAY */
   const deleteImg = (url) => {
@@ -261,6 +256,7 @@ const CreateForm = () => {
   };
 
   const openModalWithMap = async (endereco, cidade) => {
+
     const { coords } = await getCoordinates(endereco, cidade);
     setProdCoords(coords);
     setShowMap(true);
@@ -418,9 +414,11 @@ const CreateForm = () => {
                 />
               </div>
               {/* 7 - LIMITE PESSOAS DIA: */}
-              <div className="item-form">
+              ssName="item-form"><div cla
                 <div className="div-limite">
-                  <label htmlFor="limitePessoasPorDia">Limite de pessoas</label>
+                  <label htmlFor="limitePessoasPorDia">
+                    Limite de pessoas
+                  </label>
                   <Field
                     className="input"
                     type="number"
@@ -428,7 +426,9 @@ const CreateForm = () => {
                   />
                 </div>
                 <div className="div-limite">
-                  <label htmlFor="valorPorPessoa">Valor por pessoa</label>
+                  <label htmlFor="valorPorPessoa">
+                    Valor por pessoa
+                  </label>
                   <Field
                     className="input"
                     type="number"
