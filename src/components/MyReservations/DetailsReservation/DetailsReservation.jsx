@@ -35,7 +35,12 @@ const DetailsReservation = ({ reservation }) => {
                 <span className="reservations_quant">
                     {reservation.qtdPessoas}
                 </span>
-                <span className="reservations__status">Reservado</span>
+                <span className="reservations__status">
+                    {reservation.status}
+                </span>
+                <span className="reservations_valorTotal">
+                    R$ {reservation.valorTotal}
+                </span>
             </li>
         </>
 

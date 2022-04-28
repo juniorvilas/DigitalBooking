@@ -20,7 +20,7 @@
     &__item
         @include mixins.tablet
             display: grid
-            grid-template-columns: repeat(4, max-content)
+            grid-template-columns: repeat(6, max-content)
             grid-template-rows: repeat(5, 1fr)
         align-items: center
         display: flex
@@ -77,6 +77,13 @@
         font-weight: 600
         @include mixins.tablet
             grid-area: 5 / 2 / 5 / 3
+    &_valorTotal
+        &::before
+            content: "Valor Total: "
+            font-weight: 600
+        @include mixins.tablet
+            grid-area: 5 / 5 / 5 / 3
+
     
 
       
